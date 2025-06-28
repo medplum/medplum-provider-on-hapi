@@ -12,10 +12,36 @@ import { App } from './App';
 
 const medplum = new MedplumClient({
   onUnauthenticated: () => (window.location.href = '/'),
-  // baseUrl: 'http://localhost:8103/', // Uncomment this to run against the server on your localhost
+  baseUrl: 'http://localhost:8080/',
+  fhirUrlPath: 'fhir',
   cacheTime: 60000,
   autoBatchTime: 100,
+  extendedMode: false,
 });
+
+medplum.getProfile = () => {
+  return {
+    resourceType: 'Practitioner',
+    id: 'example-practitioner',
+    name: [{ given: ['John'], family: 'Doe' }],
+    identifier: [
+      {
+        system: 'http://example.com/identifiers',
+        value: '12345',
+      },
+    ],
+  };
+};
+
+medplum.getProjectMembership = () => {
+  return {
+    resourceType: 'ProjectMembership',
+    id: 'example-membership',
+    project: { reference: 'Project/example-project' },
+    user: { reference: 'User/123' },
+    profile: { reference: 'Practitioner/example-practitioner' },
+  };
+};
 
 const theme = createTheme({
   headings: {
